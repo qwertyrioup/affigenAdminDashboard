@@ -110,7 +110,7 @@ const Users = () => {
           
           
           <div style={{paddingTop: 5.5, cursor: 'pointer'}} className="delete">
-            <p> €  {params.row.qty * parseFloat(params.row.sell_price.replace(",", "."))} </p>
+            <p> €  {params.row.qty * (params.row.sell_price)} </p>
           </div>
         </div>
       );
@@ -124,7 +124,7 @@ const Users = () => {
     headerName: "Revenue",
     width: 200,
     renderCell: (params) => {
-      const value = (params.row.qty * parseFloat(params.row.sell_price.replace(",", "."))) - (params.row.qty * parseFloat(params.row.buy_price.replace(",", "."))) 
+      const value = (params.row.qty * (params.row.sell_price)) - (params.row.qty * (params.row.buy_price)) 
       
       return (
         <div className="action" >
@@ -148,13 +148,13 @@ const Users = () => {
 
       setUsers(res.data)
       setOrder(res1.data)
+      setIsLoading(false)
       var total = 0
       res.data.map((u)=>{
-        const value = (u.qty * parseFloat(u.sell_price.replace(",", "."))) - (u.qty * parseFloat(u.buy_price.replace(",", "."))) 
+        const value = (u.qty * (u.sell_price - u.buy_price)) 
         total += value
       })
       setRevenue(total)
-      setIsLoading(false)
     } catch (error) {
       console.log(error)
     }
@@ -165,6 +165,8 @@ const Users = () => {
 
     
   }, [reload])
+
+  console.log(isLoading)
 
   return (
     <div className="users">

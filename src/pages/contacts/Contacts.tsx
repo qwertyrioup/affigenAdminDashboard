@@ -134,7 +134,7 @@ const Posts = () => {
      
       
       <div className="info">
-        <h1>Posts</h1>
+        <h1>Contacts</h1>
         {/* <button
           style={{
             fontFamily: "Montserrat",

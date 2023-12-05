@@ -67,7 +67,7 @@ const [count, setCount] = useState(0)
 
   return (
     <>
-    <TableContainer component={Paper} sx={{height: 700}}>
+    <TableContainer component={Paper} sx={{height: 600}}>
 
       <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead >

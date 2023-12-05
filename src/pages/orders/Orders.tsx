@@ -24,7 +24,7 @@ const style = {
 // import { useQuery } from "@tanstack/react-query";
 
 const columns: GridColDef[] = [
-  { field: "_id", headerName: "ID", width: 90 },
+  { field: "_id", headerName: "ID", width: 70 },
 
   {
     field: "name",
@@ -48,13 +48,13 @@ const columns: GridColDef[] = [
     field: "postal_code",
     type: "string",
     headerName: "Postal Code",
-    width: 130,
+    width: 100,
   },
   {
     field: "country",
     type: "string",
     headerName: "Country",
-    width: 130,
+    width: 100,
   },
   {
     field: "phone",
@@ -67,7 +67,7 @@ const columns: GridColDef[] = [
     field: "quantity",
     type: "string",
     headerName: "Quantity",
-    width: 130,
+    width: 100,
     align: 'center',
     headerAlign: 'center'
   },
@@ -75,28 +75,40 @@ const columns: GridColDef[] = [
     field: "type",
     type: "string",
     headerName: "Type",
-    width: 130,
+    width: 100,
     align: 'center',
     headerAlign: 'center'
   },
   {
     field: "total",
     type: "string",
+    headerName: "Amount",
+    width: 100,
+  },
+  {
+    field: "shipping",
+    type: "string",
+    headerName: "Shipping",
+    width: 100,
+  },
+  {
+    field: "totalWithShipping",
+    type: "string",
     headerName: "Total",
-    width: 130,
+    width: 100,
   },
   {
     field: "status",
     type: "string",
     headerName: "Status",
-    width: 130,
+    width: 100,
   },
-  {
-    field: "seen",
-    type: "string",
-    headerName: "Seen",
-    width: 130,
-  },
+  // {
+  //   field: "seen",
+  //   type: "string",
+  //   headerName: "Seen",
+  //   width: 100,
+  // },
   
   
 ];
@@ -149,6 +161,9 @@ const Users = () => {
           state: item.user_details.address.state,
           quantity: item.cart.quantity,
           total: "€ "+item.cart.total,
+          shipping: "€ "+item.cart.shipping,
+          totalWithShipping: "€ "+item.cart.totalWithShipping,
+      
           status: item.status,
           seen: item.seen,
           type: item.type,

@@ -29,13 +29,13 @@ const columns: GridColDef[] = [
     field: "firstname",
     type: "string",
     headerName: "First Name",
-    width: 150,
+    width: 130,
   },
   {
     field: "lastname",
     type: "string",
     headerName: "Last Name",
-    width: 150,
+    width: 130,
   },
   {
     field: "email",
@@ -47,7 +47,7 @@ const columns: GridColDef[] = [
     field: "country",
     type: "string",
     headerName: "Country",
-    width: 150,
+    width: 130,
   },
   {
     field: "address",
@@ -65,13 +65,13 @@ const columns: GridColDef[] = [
     field: "isAdmin",
     type: "string",
     headerName: "isAdmin",
-    width: 200,
+    width: 130,
   },
   {
     field: "createdAt",
     type: "string",
     headerName: "Creation Date",
-    width: 200,
+    width: 130,
   },
   
 ];
