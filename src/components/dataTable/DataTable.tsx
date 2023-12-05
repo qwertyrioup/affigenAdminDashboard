@@ -1,46 +1,130 @@
-import * as React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import { TablePagination } from '@mui/material';
-import axios from 'axios';
-import { BaseUrl } from '../../pages/requests';
+import * as React from "react";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { Box, Button, Checkbox, Modal, TablePagination, TextField, Typography } from "@mui/material";
+import axios from "axios";
+import { BaseUrl } from "../../pages/requests";
 
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from "react";
+import { useDebounce } from "@uidotdev/usehooks";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 5
+};
 
 function createData(
   name: string,
   calories: number,
   fat: number,
   carbs: number,
-  protein: number,
+  protein: number
 ) {
   return { name, calories, fat, carbs, protein };
 }
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
+const columns: GridColDef[] = [
+  { field: "_id", headerName: "ID", width: 90 },
+
+  {
+    field: "cat_affigen",
+    type: "string",
+    headerName: "Cat",
+    width: 130,
+  },
+  {
+    field: "product_name",
+    type: "string",
+    headerName: "Product Name",
+    width: 550,
+  },
+  {
+    field: "size",
+    type: "string",
+    headerName: "Size",
+    width: 100,
+  },
+  {
+    field: "buy_price",
+    type: "string",
+    headerName: "Buy Price",
+    width: 150,
+  },
+  {
+    field: "sell_price",
+    type: "string",
+    headerName: "Sell Price",
+    width: 150,
+  },
+  // {
+  //   field: "single_actions",
+  //   type: "string",
+  //   headerName: "Single Actions",
+  //   width: 150,
+  // },
+
+  // {
+  //   field: "bulk_actions",
+  //   type: "string",
+  //   headerName: "Bulk Actions",
+  //   width: 150,
+  // },
+  
+  
 ];
 
+
+
 export default function BasicTable() {
-
   const [page, setPage] = React.useState(1);
+  const [list, setList] = useState([])
+  console.log(list)
+  const [searchValue, setSearchValue] = useState("");
+  const [reload, setReload] = useState(false);
+  const debouncedSearchTerm = useDebounce(searchValue, 2000);
+  const [open, setOpen] = React.useState(false);
+  const [open1, setOpen1] = React.useState(false);
+  const [open2, setOpen2] = React.useState(false);
+  const [open3, setOpen3] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
+  const handleOpen1 = () => setOpen1(true);
+  const handleClose1 = () => setOpen1(false);
+  const handleOpen2 = () => setOpen2(true);
+  const handleClose2 = () => setOpen2(false);
+  const handleOpen3 = () => setOpen3(true);
+  const handleClose3 = () => setOpen3(false);
+  const [id, setId] = useState("");
+  const [cat, setCat] = React.useState("")
+  const [product, setProduct] = React.useState("")
+  const [size, setSize] = React.useState("")
+  const [buyPrice, setBuyPrice] = React.useState(null)
+  const [sellPrice, setSellPrice] = React.useState(null)
 
   const [rowsPerPage, setRowsPerPage] = React.useState(100);
-const [data, setData] = useState([])
-const [count, setCount] = useState(0)
+  const [data, setData] = useState([]);
+  const [count, setCount] = useState(0);
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number,
+    newPage: number
   ) => {
     setPage(newPage);
   };
@@ -52,67 +136,368 @@ const [count, setCount] = useState(0)
   //   setPage(0);
   // };
 
-  const fetchData =async () => {
-    const res = await axios.get(`${BaseUrl}/odoo?page=${page}`)
-    setData(res.data.results)
-    setCount(res.data.count)
-  }
+  const fetchData = async () => {
+    if (!debouncedSearchTerm) {
+      const res = await axios.get(`${BaseUrl}/odoo?page=${page}`);
+      setData(res.data.results);
+      setCount(res.data.count);
+    } else {
+      const res = await axios.get(
+        `${BaseUrl}/elastic?param=${debouncedSearchTerm}&page=${page}`
+      );
+      setData(res.data.results);
+      setCount(res.data.count);
+    }
+  };
 
   useEffect(() => {
-    fetchData()
-  
+    fetchData();
+  }, [page, debouncedSearchTerm, reload]);
 
-  }, [page])
-  
+  const updateProduct = async (id: String) => {
+
+
+
+    try {
+      const res = await axios.put(`${BaseUrl}/odoo/${id}`, {cat_affigen: cat, product_name: product, size: size, buy_price: buyPrice, sell_price: sellPrice});
+      handleClose()
+      alert("Success")
+      setReload(!reload)
+    } catch (error) {
+      alert("Error")
+    }
+  }
+
+
+  const deleteProduct = async (id: String) => {
+
+
+
+    try {
+      const res = await axios.delete(`${BaseUrl}/odoo/${id}`);
+      handleClose()
+      alert("Success")
+      setReload(!reload)
+    } catch (error) {
+      alert("Error")
+    }
+  }
+
+  const multiUpdate = async () => {
+
+
+
+    try {
+      const res = await axios.put(`${BaseUrl}/odoo/updatemany/${list}`, {cat_affigen: cat, product_name: product, size: size, buy_price: buyPrice, sell_price: sellPrice});
+      handleClose2()
+      alert("Success")
+      setReload(!reload)
+    } catch (error) {
+      alert("Error")
+    }
+  }
+
+
+
+  const multiDelete = async () => {
+
+
+
+    try {
+      const res = await axios.delete(`${BaseUrl}/odoo/deletemany/${list}`);
+      handleClose3()
+      alert("Success")
+      setReload(!reload)
+    } catch (error) {
+      alert("Error")
+    }
+  }
+
+
+  const singleActions: GridColDef = {
+    field: "single_actions",
+    headerAlign:'center',
+    align: 'center',
+    headerName: "Single Actions",
+    width: 150,
+    renderCell: (params) => {
+      return (
+        <div className="action" >
+          
+          
+          <div style={{paddingTop: 5.5, cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 15}} className="delete">
+            <img src="/delete.svg" alt=""  onClick={()=> {
+              setId(params.row._id)
+              
+              handleOpen1()
+            }} />
+            <img src="/view.svg" alt="" onClick={()=> {
+              setId(params.row._id)
+              setCat(params.row.cat_affigen)
+              setProduct(params.row.product_name)
+              setSize(params.row.size)
+              setBuyPrice(params.row.buy_price)
+              setSellPrice(params.row.sell_price)
+              handleOpen()
+            }}  />
+
+          </div>
+        </div>
+      );
+    },
+  };
+
+  const bulkActions: GridColDef = {
+    field: "bluk_actions",
+    headerAlign:'center',
+    align: 'center',
+    headerName: "Bulk Actions",
+    width: 150,
+    renderCell: (params) => {
+      return (
+        <div className="action" >
+          
+          
+          <div style={{paddingTop: 5.5, cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 15}} className="delete">
+            <img src="/delete.svg" alt=""  onClick={()=> {
+              setId(params.row._id)
+              
+              handleOpen3()
+            }}/>
+            <img src="/view.svg" alt="" onClick={()=> {
+              setId("")
+              setCat("")
+              setProduct("")
+              setSize("")
+              setBuyPrice(null)
+              setSellPrice(null)
+              handleOpen2()
+            }}  />
+
+          </div>
+        </div>
+      );
+    },
+  };
 
   return (
-    <>
-    <TableContainer component={Paper} sx={{height: 600}}>
+    <div>
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "white",
+          padding: "10px",
+        }}
+      >
+        <TextField
+          label="Search"
+          // id="outlined-size-small"
+          defaultValue={searchValue}
+          size="small"
+          onChange={(e) => setSearchValue(e.target.value)}
+        />
+      </div>
 
-      <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead >
-          <TableRow>
-            {/* <TableCell sx={{fontFamily: 'Montserrat', color: 'black', fontSize: 14, width: 100}} >ID</TableCell> */}
-            <TableCell sx={{fontFamily: 'Montserrat', color: 'black', fontSize: 14}} align="left">CAT</TableCell>
-            <TableCell sx={{fontFamily: 'Montserrat', color: 'black', fontSize: 14}} align="left">Product Name</TableCell>
-            <TableCell sx={{fontFamily: 'Montserrat', color: 'black', fontSize: 14}} align="left">Category</TableCell>
-            <TableCell sx={{fontFamily: 'Montserrat', color: 'black', fontSize: 14}} align="left">Size</TableCell>
-            <TableCell sx={{fontFamily: 'Montserrat', color: 'black', fontSize: 14}} align="left">Buy Price</TableCell>
-            <TableCell sx={{fontFamily: 'Montserrat', color: 'black', fontSize: 14}} align="left">Sell Price</TableCell>
-         
-            
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map((row) => (
-            <TableRow
-            key={row._id}
-            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              {/* <TableCell sx={{fontFamily: 'Montserrat', color: 'black', fontSize: 14, width: 100}} component="th" scope="row">
-                {row._id}
-              </TableCell> */}
-              <TableCell sx={{fontFamily: 'Montserrat', color: 'black', fontSize: 14}} align="left">{row.cat_affigen}</TableCell>
-              <TableCell sx={{fontFamily: 'Montserrat', color: 'black', fontSize: 14}} align="left">{row.product_name}</TableCell>
-              <TableCell sx={{fontFamily: 'Montserrat', color: 'black', fontSize: 14}} align="left">{row.product_category}</TableCell>
-              <TableCell sx={{fontFamily: 'Montserrat', color: 'black', fontSize: 14}} align="left">{row.size}</TableCell>
-              <TableCell sx={{fontFamily: 'Montserrat', color: 'black', fontSize: 14}} align="left">$ {row.buy_price}</TableCell>
-              <TableCell sx={{fontFamily: 'Montserrat', color: 'black', fontSize: 14}} align="left">$ {row.sell_price}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-     
-    </TableContainer>
-      <TablePagination
-      component="div"
-      sx={{backgroundColor: '#fff'}}
-      count={count}
-      page={page}
-      onPageChange={handleChangePage}
-      rowsPerPage={rowsPerPage}
-      // onRowsPerPageChange={handleChangeRowsPerPage}
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Update Product
+          </Typography>
+          <div style={{width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 15}} >
+          <TextField
+          label="Cat"
+          id="outlined-size-small"
+          onChange={(e)=>setCat(e.target.value)}
+          value={cat}
+          size="small"
+          sx={{width: '90%'}}
+          
+        />
+        <TextField
+          label="Product Name"
+          id="outlined-size-small"
+          onChange={(e)=>setProduct(e.target.value)}
+          value={product}
+          size="small"
+          sx={{width: '90%'}}
+          
+        />
+        <TextField
+          label="Size"
+          id="outlined-size-small"
+          onChange={(e)=>setSize(e.target.value)}
+          value={size}
+          size="small"
+          sx={{width: '90%'}}
+        />
+        <TextField
+          label="Buy Price"
+          type="number"
+          id="outlined-size-small"
+          onChange={(e)=>setBuyPrice(Number(e.target.value))}
+          value={buyPrice}
+          size="small"
+          sx={{width: '90%'}}
+        />
+        <TextField
+          label="Sell Price"
+          type="number"
+          id="outlined-size-small"
+          onChange={(e)=>setSellPrice(Number(e.target.value))}
+          value={sellPrice}
+          size="small"
+          sx={{width: '90%'}}
+        />
+          </div>
+          <Button onClick={()=> updateProduct(id)} variant="outlined">Update</Button>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={open2}
+        onClose={handleClose2}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Update Product
+          </Typography>
+          <div style={{width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 15}} >
+          <TextField
+          label="Cat"
+          id="outlined-size-small"
+          onChange={(e)=>setCat(e.target.value)}
+          value={cat}
+          size="small"
+          sx={{width: '90%'}}
+          
+        />
+        <TextField
+          label="Product Name"
+          id="outlined-size-small"
+          onChange={(e)=>setProduct(e.target.value)}
+          value={product}
+          size="small"
+          sx={{width: '90%'}}
+          
+        />
+        <TextField
+          label="Size"
+          id="outlined-size-small"
+          onChange={(e)=>setSize(e.target.value)}
+          value={size}
+          size="small"
+          sx={{width: '90%'}}
+        />
+        <TextField
+          label="Buy Price"
+          type="number"
+          id="outlined-size-small"
+          onChange={(e)=>setBuyPrice(e.target.value)}
+          value={buyPrice}
+          size="small"
+          sx={{width: '90%'}}
+        />
+        <TextField
+          label="Sell Price"
+          type="number"
+          id="outlined-size-small"
+          onChange={(e)=>setSellPrice(e.target.value)}
+          value={sellPrice}
+          size="small"
+          sx={{width: '90%'}}
+        />
+          </div>
+          <Button onClick={()=> multiUpdate()} variant="outlined">Multi Update</Button>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={open1}
+        onClose={handleClose1}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Delete Product
+          </Typography>
+          <div style={{width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 15}} >
+            <p>Are you sure To delete this product ?</p>
+          <Button onClick={()=> deleteProduct(id)} variant="outlined">Yes Delete</Button>
+          
+          </div>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={open3}
+        onClose={handleClose3}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Bulk Delete Products
+          </Typography>
+          <div style={{width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 15}} >
+            <p>Are you sure To bulk delete selected products ?</p>
+          <Button onClick={()=> multiDelete()} variant="outlined">Yes Delete</Button>
+          
+          </div>
+        </Box>
+      </Modal>
+
+
+<DataGrid
+        className="dataGrid"
+        style={{height: 600, backgroundColor: "#fff", fontFamily: 'Montserrat', color: 'black', fontSize: 14}}
+        rows={data}
+        columns={[...columns, singleActions, bulkActions]}
+        getRowId={(row) => row._id}
+        // initialState={{
+        //   pagination: {
+        //     paginationModel: {
+        //       pageSize: 10,
+        //     },
+        //   },
+        // }}
+        // slots={{ toolbar: GridToolbar }}
+        // slotProps={{
+        //   toolbar: {
+        //     showQuickFilter: true,
+        //     quickFilterProps: { debounceMs: 500 },
+        //   },
+        // }}
+        // pageSizeOptions={[5]}
+        checkboxSelection
+        disableRowSelectionOnClick
+        onRowSelectionModelChange={item=> setList(eval(item))}
+        disableColumnFilter
+        disableDensitySelector
+        disableColumnSelector
+        hideFooter={true}
       />
-      </>
+
+
+      <TablePagination
+        component="div"
+        sx={{ backgroundColor: "#fff" }}
+        count={count}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        // onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </div>
   );
 }

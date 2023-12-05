@@ -267,13 +267,14 @@ const Users = () => {
             quickFilterProps: { debounceMs: 500 },
           },
         }}
-        pageSizeOptions={[5]}
+        // pageSizeOptions={[5]}
         checkboxSelection
         disableRowSelectionOnClick
         // onRowSelectionModelChange={item=> setList(eval(item))}
         disableColumnFilter
         disableDensitySelector
         disableColumnSelector
+        hideFooter={false}
       />
 )}
       
