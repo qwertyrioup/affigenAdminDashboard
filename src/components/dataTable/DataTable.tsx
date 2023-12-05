@@ -175,7 +175,7 @@ export default function BasicTable() {
 
     try {
       const res = await axios.delete(`${BaseUrl}/odoo/${id}`);
-      handleClose()
+      handleClose1()
       alert("Success")
       setReload(!reload)
     } catch (error) {
