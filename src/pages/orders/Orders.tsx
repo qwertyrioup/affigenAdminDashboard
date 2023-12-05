@@ -1,6 +1,6 @@
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 
-import "./Users.scss";
+import "./Orders.scss";
 import { useState, useEffect } from "react";
 
 import { BaseUrl } from "../requests";
