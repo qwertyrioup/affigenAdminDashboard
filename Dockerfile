@@ -1,9 +1,9 @@
 # # base image
 # FROM node:20.9.0-alpine
 # base image
-FROM node:20.9.0-alpine
+FROM node:20.9.0-alpine as BUILD_IMAGE
 # Create and change to the app directory.
-WORKDIR /usr/app
+WORKDIR /app/panel
 
 # Copy application dependency manifests to the container image.
 # A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
@@ -22,9 +22,20 @@ COPY package.json .
 RUN npm i
 
 COPY . .
+RUN npm run build
 
-## EXPOSE [Port you mentioned in the vite.config file]
 
+
+FROM node:20.9.0-alpine as PRODCTION_IMAGE
+WORKDIR /app/panel
+
+COPY --from=BUILD_IMAGE /app/panel/dist/ /app/panel/dist/
 EXPOSE 8080
 
-CMD ["npm", "run", "build"]
+
+COPY package.json .
+COPY vite.config.ts .
+RUN npm i typescript
+EXPOSE 8080
+
+CMD ["npm", "run", "preview"]
