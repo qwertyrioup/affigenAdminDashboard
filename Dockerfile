@@ -19,10 +19,10 @@ WORKDIR /app/panel
 # CMD ["npm", "start"]
 
 COPY package.json .
-RUN npm i
+RUN yarn
 
 COPY . .
-RUN npm run build
+RUN yarn run build
 
 
 
@@ -38,4 +38,4 @@ COPY vite.config.ts .
 RUN npm i typescript
 EXPOSE 8080
 
-CMD ["npm", "run", "preview"]
+CMD ["yarn", "run", "preview"]
