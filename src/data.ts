@@ -45,7 +45,7 @@ export const menu = [
   },
   {
     id: 2,
-    title: "lists",
+    title: "Tools",
     listItems: [
       {
         id: 1,
@@ -59,6 +59,13 @@ export const menu = [
         url: "/odoo",
         icon: "product.svg",
       },
+      {
+        id: 3,
+        title: "Categories",
+        url: "/categories",
+        icon: "product.svg",
+      },
+
       
       {
         id: 4,

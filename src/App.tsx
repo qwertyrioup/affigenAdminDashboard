@@ -26,6 +26,7 @@ import {
 } from "@tanstack/react-query";
 import { useAppSelector } from "./redux/hooks";
 import Posts from "./pages/posts/Posts";
+import Categories from "./pages/categories/Categories";
 
 
 const queryClient = new QueryClient();
@@ -77,6 +78,10 @@ function App() {
         {
           path: "/orders",
           element: (user ? <Orders /> : <Navigate replace to={"/login"} />),
+        },
+        {
+          path: "/categories",
+          element: (user ? <Categories /> : <Navigate replace to={"/login"} />),
         },
         {
           path: "/order/:id",

@@ -95,14 +95,13 @@ const columns: GridColDef[] = [
 export default function BasicTable() {
   const [page, setPage] = React.useState(1);
   const [list, setList] = useState([])
-  console.log(list)
   const [searchValue, setSearchValue] = useState("");
   const [reload, setReload] = useState(false);
   const debouncedSearchTerm = useDebounce(searchValue, 2000);
-  const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
   const [open3, setOpen3] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -260,7 +259,7 @@ export default function BasicTable() {
           
           <div style={{paddingTop: 5.5, cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 15}} className="delete">
             <img src="/delete.svg" alt=""  onClick={()=> {
-              setId(params.row._id)
+              // setId(params.row._id)
               
               handleOpen3()
             }}/>
