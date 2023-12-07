@@ -81,6 +81,18 @@ export const menu = [
       },
       {
         id: 6,
+        title: "Posters",
+        url: "/posters",
+        icon: "order.svg",
+      },
+      {
+        id: 7,
+        title: "Brands",
+        url: "/brands",
+        icon: "order.svg",
+      },
+      {
+        id: 8,
         title: "Contacts",
         url: "/contacts",
         icon: "order.svg",

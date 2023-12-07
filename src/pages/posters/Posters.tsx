@@ -56,22 +56,22 @@ const columns: GridColDef[] = [
     width: 200,
   },
   {
-    field: "dsc",
+    field: "link_to",
     type: "string",
-    headerName: "Description",
+    headerName: "Link To",
     headerAlign: "center",
     align: "center",
     width: 200,
   },
-  {
-    field: "price",
-    type: "string",
-    headerName: "Price",
-    width: 200,
-  },
+  // {
+  //   field: "price",
+  //   type: "string",
+  //   headerName: "Price",
+  //   width: 200,
+  // },
 ];
 
-const Posts = () => {
+const Posters = () => {
   const [users, setUsers] = useState([]);
 
   const [reload, setReload] = useState(false);
@@ -79,8 +79,7 @@ const Posts = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [title, setTitle] = useState("");
-  const [dsc, setDsc] = useState("");
-  const [price, setPrice] = useState(null);
+  const [linkTo, setLinkTo] = useState("");
   const currentUser = useAppSelector((state) => state.user.currentUser);
 
   
@@ -99,20 +98,8 @@ const Posts = () => {
     e.preventDefault();
     let upload = file;
     if (!upload) {
-      try {
-        await axios.post(`${BaseUrl}/post/create`, {
-          title: title,
-          dsc: dsc,
-          price: price,
-          userId: currentUser._id,
-          
-        });
-        alert("Success")
-        handleClose();
-        setReload(!reload);
-      } catch (error) {
-        alert("Error")
-      }
+      alert("Please add a Poster first!");
+      
     } else {
       let fileUpload = new FormData();
     fileUpload.append("file", upload);
@@ -130,15 +117,14 @@ const Posts = () => {
         }
       });
       const url = response.data.url
-      await axios.post(`${BaseUrl}/post/create`, {
+      await axios.post(`${BaseUrl}/poster/create`, {
         title: title,
-        dsc: dsc,
-        price: price,
+        link_to: linkTo,
         userId: currentUser._id,
         image: url.toString()
         
       });
-      alert("New Post created")
+      alert("New Poster created")
       handleClose();
       setFile("")
       setImage(null)
@@ -175,9 +161,9 @@ const Posts = () => {
               onClick={async () => {
                 try {
                   await axios.delete(
-                    `${BaseUrl}/post/delete/${params.row._id}`
+                    `${BaseUrl}/poster/delete/${params.row._id}`
                   );
-                  alert("Post Deleted !");
+                  alert("Poster Deleted !");
                   setReload(!reload);
                 } catch (error) {
                   alert("Error");
@@ -211,7 +197,7 @@ const Posts = () => {
 
   const getAllUsers = async () => {
     try {
-      const res = await axios.get(`${BaseUrl}/post/getall`);
+      const res = await axios.get(`${BaseUrl}/poster/getall`);
 
       setUsers(res.data);
       setIsLoading(false);
@@ -259,7 +245,7 @@ const Posts = () => {
                 <Typography
                   style={{ color: "black", fontFamily: "Montserrat" }}
                 >
-                  Add New Post
+                  Add New Poster
                 </Typography>
               </div>
               <div
@@ -280,15 +266,15 @@ const Posts = () => {
                 />
                 <TextField
                   id="outlined-helperText"
-                  label="Description"
-                  onChange={(e) => setDsc(e.target.value)}
+                  label="Link to "
+                  onChange={(e) => setLinkTo(e.target.value)}
                 />
-                <TextField
+                {/* <TextField
                   id="outlined-helperText"
                   label="Price"
                   type="number"
                   onChange={(e) => setPrice(e.target.value)}
-                />
+                /> */}
               </div>
 
               <div>
@@ -393,7 +379,7 @@ const Posts = () => {
       </Modal>
 
       <div className="info">
-        <h1>Posts</h1>
+        <h1>Posters</h1>
         <button
           style={{
             fontFamily: "Montserrat",
@@ -403,7 +389,7 @@ const Posts = () => {
           }}
           onClick={handleOpen}
         >
-          Add New Post
+          Add New Poster
         </button>
       </div>
 
@@ -448,4 +434,4 @@ const Posts = () => {
   );
 };
 
-export default Posts;
+export default Posters;

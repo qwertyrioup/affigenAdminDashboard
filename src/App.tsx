@@ -27,6 +27,8 @@ import {
 import { useAppSelector } from "./redux/hooks";
 import Posts from "./pages/posts/Posts";
 import Categories from "./pages/categories/Categories";
+import Posters from "./pages/posters/Posters";
+import Brands from "./pages/brands/Brands";
 
 
 const queryClient = new QueryClient();
@@ -95,6 +97,14 @@ function App() {
         {
           path: "/posts",
           element: (user ? <Posts /> : <Navigate replace to={"/login"} />),
+        },
+        {
+          path: "/posters",
+          element: (user ? <Posters /> : <Navigate replace to={"/login"} />),
+        },
+        {
+          path: "/brands",
+          element: (user ? <Brands /> : <Navigate replace to={"/login"} />),
         },
         {
           path: "/contacts",
