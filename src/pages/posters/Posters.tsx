@@ -27,6 +27,7 @@ import { MdCloudUpload, MdDelete } from "react-icons/md";
 import { AiFillFileImage } from "react-icons/ai";
 import LinearWithValueLabel from "../../components/progressBar/ProgressBar";
 
+
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -55,14 +56,14 @@ const columns: GridColDef[] = [
     headerName: "Title",
     width: 200,
   },
-  {
-    field: "link_to",
-    type: "string",
-    headerName: "Link To",
-    headerAlign: "center",
-    align: "center",
-    width: 200,
-  },
+  // {
+  //   field: "link_to",
+  //   type: "string",
+  //   headerName: "Link To",
+  //   headerAlign: "center",
+  //   align: "center",
+  //   width: 200,
+  // },
   // {
   //   field: "price",
   //   type: "string",
@@ -81,7 +82,11 @@ const Posters = () => {
   const [title, setTitle] = useState("");
   const [linkTo, setLinkTo] = useState("");
   const currentUser = useAppSelector((state) => state.user.currentUser);
+  const [age, setAge] = useState('');
 
+  const handleChangeSelect = (event: SelectChangeEvent) => {
+    setAge(`/brand/${event.target.value}`);
+  };
   
   const [isLoading, setIsLoading] = useState(true);
   const [image, setImage] = useState(null);
@@ -119,7 +124,7 @@ const Posters = () => {
       const url = response.data.url
       await axios.post(`${BaseUrl}/poster/create`, {
         title: title,
-        link_to: linkTo,
+        link_to: age,
         userId: currentUser._id,
         image: url.toString()
         
@@ -195,6 +200,22 @@ const Posters = () => {
     },
   };
 
+  const linkColumn: GridColDef = {
+    field: "link_to",
+    headerAlign: "center",
+    align: "center",
+    headerName: "Link To",
+    width: 200,
+    renderCell: (params) => {
+      return (
+        <div style={{width: 200, display: 'flex', alignItems: 'center', justifyContent: 'center'}} >
+          {params.row.link_to.split('/')[2]}
+
+        </div>
+      );
+    },
+  };
+
   const getAllUsers = async () => {
     try {
       const res = await axios.get(`${BaseUrl}/poster/getall`);
@@ -206,9 +227,24 @@ const Posters = () => {
     }
   };
 
+  const [brands, setBrands] = useState([])
+
+  const getAllBrands = async () => {
+    try {
+      const res = await axios.get(`${BaseUrl}/brands/getall`);
+
+      setBrands(res.data);
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
 
-
+console.log(age)
+useEffect(()=>{
+  getAllBrands()
+}, [])
 
   useEffect(() => {
     getAllUsers();
@@ -264,11 +300,27 @@ const Posters = () => {
                   label="Title"
                   onChange={(e) => setTitle(e.target.value)}
                 />
-                <TextField
+                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+      <InputLabel id="demo-select-small-label">Link To</InputLabel>
+      {brands && <Select
+        labelId="demo-select-small-label"
+        id="demo-select-small"
+        value={age.split('/')[2]}
+        label="Link To"
+        onChange={handleChangeSelect}
+      >
+        {brands.map((b,i)=>
+        
+        <MenuItem key={i} value={b}>{b}</MenuItem>
+        )}
+       
+      </Select>}
+    </FormControl>
+                {/* <TextField
                   id="outlined-helperText"
                   label="Link to "
                   onChange={(e) => setLinkTo(e.target.value)}
-                />
+                /> */}
                 {/* <TextField
                   id="outlined-helperText"
                   label="Price"
@@ -408,7 +460,7 @@ const Posters = () => {
             fontSize: 14,
           }}
           rows={users}
-          columns={[imageColumn, ...columns, actionColumn]}
+          columns={[imageColumn, ...columns,linkColumn, actionColumn]}
           getRowId={(row) => row._id}
           initialState={{
             pagination: {
