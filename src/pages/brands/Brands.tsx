@@ -22,10 +22,11 @@ import {
 } from "@mui/material";
 import { useAppSelector } from "../../redux/hooks";
 import { Link } from "react-router-dom";
-import {ProgressBarLine} from "react-progressbar-line"
+
 
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 import { AiFillFileImage } from "react-icons/ai";
+import LinearWithValueLabel from "../../components/progressBar/ProgressBar";
 
 const style = {
   position: "absolute" as "absolute",
@@ -86,7 +87,7 @@ const Brands = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [image, setImage] = useState(null);
   const [file, setFile] = useState("");
-  const [progress, setProgress] = useState("");
+  const [progress, setProgress] = useState(0);
   
   function handleChange(event) {
     setFile(event.target.files[0]);
@@ -124,7 +125,7 @@ const Brands = () => {
           let percentCompleted = Math.round(
             (uploadEvt.loaded * 100) / uploadEvt.total
           );
-          setProgress(percentCompleted.toString());
+          setProgress(percentCompleted);
         }
       });
       const url = response.data.url
@@ -139,7 +140,7 @@ const Brands = () => {
       handleClose();
       setFile("")
       setImage(null)
-      setProgress("")
+      setProgress(0)
       setReload(!reload);
     
     } catch (error) {
@@ -344,7 +345,8 @@ const Brands = () => {
                   </div>
                 </div>
                 <div style={{width: 250}} >
-                  <ProgressBarLine
+                <LinearWithValueLabel progress={Number(progress)}  />
+                  {/* <ProgressBarLine
                 
           value={progress}
           min={0}
@@ -365,7 +367,9 @@ const Brands = () => {
               fontSize: "12px",
             },
           }}
-        /></div>
+        /> */}
+        
+        </div>
               </div>
               <div>
                 <button

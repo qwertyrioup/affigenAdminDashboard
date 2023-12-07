@@ -22,10 +22,11 @@ import {
 } from "@mui/material";
 import { useAppSelector } from "../../redux/hooks";
 import { Link } from "react-router-dom";
-import {ProgressBarLine} from "react-progressbar-line"
+
 
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 import { AiFillFileImage } from "react-icons/ai";
+import LinearWithValueLabel from "../../components/progressBar/ProgressBar";
 
 const style = {
   position: "absolute" as "absolute",
@@ -87,7 +88,7 @@ const Posts = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [image, setImage] = useState(null);
   const [file, setFile] = useState("");
-  const [progress, setProgress] = useState("");
+  const [progress, setProgress] = useState(0);
   
   function handleChange(event) {
     setFile(event.target.files[0]);
@@ -126,7 +127,7 @@ const Posts = () => {
           let percentCompleted = Math.round(
             (uploadEvt.loaded * 100) / uploadEvt.total
           );
-          setProgress(percentCompleted.toString());
+          setProgress(percentCompleted);
         }
       });
       const url = response.data.url
@@ -142,7 +143,7 @@ const Posts = () => {
       handleClose();
       setFile("")
       setImage(null)
-      setProgress("")
+      setProgress(0)
       setReload(!reload);
     
     } catch (error) {
@@ -347,28 +348,8 @@ const Posts = () => {
                   </div>
                 </div>
                 <div style={{width: 250}} >
-                  <ProgressBarLine
-                
-          value={progress}
-          min={0}
-          max={100}
-          strokeWidth={5}
-          trailWidth={5}
-          styles={{
-            path: {
-              stroke: "#17b978",
-            },
-            
-            trail: {
-              stroke: "#ffffff",
-            },
-            text: {
-              fill: "#000000",
-              textAlign: "center",
-              fontSize: "12px",
-            },
-          }}
-        /></div>
+                  <LinearWithValueLabel progress={Number(progress)}  />
+        </div>
               </div>
               <div>
                 <button
