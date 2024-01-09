@@ -97,6 +97,12 @@ export const menu = [
         url: "/contacts",
         icon: "order.svg",
       },
+      {
+        id: 9,
+        title: "Products Preview",
+        url: "/products_preview",
+        icon: "order.svg",
+      },
      
     ],
   }

@@ -191,6 +191,49 @@ const Brands = () => {
   };
 
 
+  const showInHome: GridColDef = {
+    field: "in_home",
+    headerAlign: "center",
+    align: "center",
+    headerName: "In Home",
+    width: 200,
+    renderCell: (params) => {
+      return (
+        <div className="action">
+          <div
+            style={{ paddingTop: 5.5, cursor: "pointer" }}
+            className="delete"
+          >
+            <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+      <InputLabel id="demo-select-small-label">Show in Home</InputLabel>
+      <Select
+        labelId="demo-select-small-label"
+        id="demo-select-small"
+        defaultValue={params.row.in_home}
+        label="Shown In home"
+        onChange={async(e)=> {
+          const res = await axios.put(`${BaseUrl}/brands/update/${params.row._id}`, {in_home: e.target.value})
+          setReload(!reload)
+          alert("Successful updated!")
+       
+        }}
+      
+      >
+        
+        
+        <MenuItem value={true} >true</MenuItem>
+        <MenuItem value={false} >false</MenuItem>
+        
+       
+      </Select>
+    </FormControl>
+          </div>
+        </div>
+      );
+    },
+  };
+
+
   const imageColumn: GridColDef = {
     field: "image",
     headerAlign: "center",
@@ -420,7 +463,7 @@ const Brands = () => {
             fontSize: 14,
           }}
           rows={users}
-          columns={[imageColumn, ...columns, actionColumn]}
+          columns={[imageColumn, ...columns,showInHome, actionColumn]}
           getRowId={(row) => row._id}
           initialState={{
             pagination: {

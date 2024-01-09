@@ -135,6 +135,27 @@ export default function BasicTable() {
   //   setPage(0);
   // };
 
+  const addPopular = async(product_name: string, cat_affigen: string, product_id: string) => {
+    try {
+      const isPopular = (await axios.get(`${BaseUrl}/popular/get/${cat_affigen}`)).data
+     console.log(typeof isPopular);
+      if (Object.keys(isPopular).length>0) {
+        alert('Product Already in Polpular List')
+      } else {
+        const response = await axios.post(`${BaseUrl}/popular/create`, {
+          product_name: product_name,
+          cat_affigen: cat_affigen,
+          product_id: product_id
+        })
+        alert('Successfully added to popular list')
+        
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
   const fetchData = async () => {
     if (!debouncedSearchTerm) {
       const res = await axios.get(`${BaseUrl}/odoo?page=${page}`);
@@ -245,6 +266,33 @@ export default function BasicTable() {
       );
     },
   };
+
+
+  const inHome: GridColDef = {
+    field: "in_home",
+    headerAlign:'center',
+    align: 'center',
+    headerName: "Popular",
+    width: 150,
+    renderCell: (params) => {
+      return (
+        <div className="action" >
+          
+          
+          <div style={{paddingTop: 5.5, cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 15}} className="delete">
+            
+            <img src="/view.svg" alt="" onClick={async()=>{
+              await addPopular(params.row.product_name, params.row.cat_affigen, params.row._id)
+            }}  />
+
+          </div>
+        </div>
+      );
+    },
+  };
+
+
+
 
   const bulkActions: GridColDef = {
     field: "bluk_actions",
@@ -461,7 +509,7 @@ export default function BasicTable() {
         className="dataGrid"
         style={{height: 600, backgroundColor: "#fff", fontFamily: 'Montserrat', color: 'black', fontSize: 14}}
         rows={data}
-        columns={[...columns, singleActions, bulkActions]}
+        columns={[...columns,inHome, singleActions, bulkActions]}
         getRowId={(row) => row._id}
         // initialState={{
         //   pagination: {

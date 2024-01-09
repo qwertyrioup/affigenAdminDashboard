@@ -6,6 +6,7 @@ import Orders from "./pages/orders/Orders";
 import Contacts from "./pages/contacts/Contacts";
 
 import Order from "./pages/order/Order";
+import ProductPreview from "./pages/productsPreview/ProductsPreview";
 
 
 import Affigen from "./pages/affigen/Affigen";
@@ -113,6 +114,10 @@ function App() {
         {
           path: "/products/:id",
           element: (user ? <Product /> : <Navigate replace to={"/login"} />),
+        },
+        {
+          path: "/products_preview",
+          element: (user ? <ProductPreview /> : <Navigate replace to={"/login"} />),
         },
       ],
     },
